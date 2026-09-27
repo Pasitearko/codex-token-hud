@@ -26,6 +26,7 @@ DWMWA_NCRENDERING_POLICY = 2
 DWMWA_WINDOW_CORNER_PREFERENCE = 33
 DWMNCRP_DISABLED = 1
 GWL_EXSTYLE = -20
+GW_OWNER = 4
 GWLP_HWNDPARENT = -8
 GCL_STYLE = -26
 CS_DROPSHADOW = 0x00020000
@@ -42,6 +43,8 @@ SWP_NOMOVE = 0x0002
 SWP_FRAMECHANGED = 0x0020
 MONITOR_DEFAULTTONEAREST = 2
 GA_ROOT = 2
+MIN_MAIN_WINDOW_WIDTH = 160
+MIN_MAIN_WINDOW_HEIGHT = 100
 
 u32 = ctypes.WinDLL("user32", use_last_error=True)
 dwmapi = ctypes.WinDLL("dwmapi", use_last_error=True)
@@ -124,18 +127,46 @@ def get_catalog() -> list[tuple[str, str, float]]:
         return []
 
 
+def is_codex_main_window(hwnd: int) -> bool:
+    # Chromium tray menus share the app process; one observed menu was an
+    # owned, non-activating 48x25 window rather than the main page.
+    if not u32.IsWindowVisible(hwnd) or u32.GetWindow(hwnd, GW_OWNER):
+        return False
+    if _get_window_long(hwnd, GWL_EXSTYLE) & (WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE):
+        return False
+    left, top, right, bottom = rect(hwnd)
+    if right - left < MIN_MAIN_WINDOW_WIDTH or bottom - top < MIN_MAIN_WINDOW_HEIGHT:
+        return False
+    if _process_name(hwnd).casefold() not in {"codex.exe", "chatgpt.exe"}:
+        return False
+    return not is_minimized_or_cloaked(hwnd)
+
+
 def enum_windows() -> list[int]:
     result: list[int] = []
     callback_type = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
     @callback_type
     def visit(hwnd, _):
-        if u32.IsWindowVisible(hwnd):
-            # The Windows Codex desktop client currently ships its main process as ChatGPT.exe.
-            if _process_name(hwnd).casefold() in {"codex.exe", "chatgpt.exe"}:
-                result.append(int(hwnd))
+        if is_codex_main_window(hwnd):
+            result.append(int(hwnd))
         return True
     u32.EnumWindows(visit, 0)
     return result
+
+
+def select_codex_window(foreground: int, previous: int | None, windows: list[int]) -> int | None:
+    candidates = set(windows)
+    hwnd = foreground
+    seen = set()
+    # A foreground menu should resolve to its eligible main-window owner.
+    while hwnd and hwnd not in seen:
+        if hwnd in candidates:
+            return hwnd
+        seen.add(hwnd)
+        hwnd = int(u32.GetWindow(hwnd, GW_OWNER) or 0)
+    if previous in candidates:
+        return previous
+    return next(iter(windows), None)
 
 
 def _process_name(hwnd: int) -> str:
@@ -851,9 +882,7 @@ class TokenStrip:
             catalog = get_catalog()
             windows = enum_windows()
             fg = int(u32.GetForegroundWindow() or 0)
-            previous = self.last_active_codex
-            hwnd = fg if fg in windows else previous if previous in windows else next(
-                (h for h in windows if not is_minimized_or_cloaked(h)), None)
+            hwnd = select_codex_window(fg, self.last_active_codex, windows)
             title = uia_page_title(hwnd, catalog) if hwnd else ""
             auto = discover_thread_for_title(title, catalog)
             pinned = self.pinned_thread
@@ -868,6 +897,8 @@ class TokenStrip:
             self.root.after(0, lambda: setattr(self, "_worker_busy", False))
 
     def _accept_poll(self, catalog, hwnd, title, thread_id, totals):
+        if hwnd and not self.visual_only and not is_codex_main_window(hwnd):
+            hwnd, title, thread_id, totals = None, "", None, Totals()
         self.catalog = catalog
         previous_thread = self.thread_id
         previous_hwnd = self.target_hwnd

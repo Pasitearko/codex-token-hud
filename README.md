@@ -17,7 +17,7 @@ An unofficial floating HUD for the Codex desktop app on Windows. It follows the 
 - **One continuous HUD:** a compact single-line view morphs into an expanded two-column view. Hover begins expansion after about 90 ms; leaving begins collapse after about 200 ms. Click to pin or unpin the expanded view.
 - **Current-chat metrics:** total tokens, input, output, cached input, cache hit rate, and relative update time. Click an expanded token number to switch that metric between abbreviated and exact integer display; the collapsed HUD always stays abbreviated. The **Copy** control copies all four exact token counts.
 - **Readable units:** counts below 10,000 show their full number. At 10,000, one million, and one billion the HUD switches to W (ten thousand), M (million), and B (billion), with at most one decimal.
-- **Window-aware docking:** drag and release to dock beside a Codex edge or its safe titlebar area. The HUD follows Codex, hides when its window is minimized or closed, and stays below unrelated foreground windows.
+- **Window-aware docking:** drag and release to dock beside a Codex edge or its safe titlebar area. The HUD follows the main Codex window, ignores transient menus, hides when the main window is minimized or closed, and stays below unrelated foreground windows.
 - **Local-only data:** reads Codex's local token-count snapshots and catalog. It does not send chat content or usage data to a server.
 
 ## Requirements
@@ -57,9 +57,10 @@ When reporting a bug, do not attach real session logs, database files, chat text
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). UI probes in this repository require an unlocked, interactive Windows desktop; they are not headless CI tests. You can check Python syntax with:
+See [CONTRIBUTING.md](CONTRIBUTING.md). UI probes in this repository require an unlocked, interactive Windows desktop; they are not headless CI tests. Run automated regression tests and check Python syntax with:
 
 ```powershell
+python -m unittest discover -s tests -p 'test_*.py'
 python -m py_compile token_strip.py smooth_capsule.py
 ```
 

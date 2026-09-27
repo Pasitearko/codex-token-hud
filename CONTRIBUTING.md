@@ -6,7 +6,7 @@ Contributions are welcome. This is a Windows desktop project; UI changes should 
 
 1. Open an issue for larger changes, or fork the repository and create a focused branch.
 2. Keep token aggregation, chat matching, and HUD presentation changes separate where practical.
-3. Run `python -m py_compile token_strip.py smooth_capsule.py` before opening a pull request. For UI changes, run the relevant `hud_*_probe.py` scripts in an unlocked Windows desktop session and describe what you observed.
+3. Run `python -m unittest discover -s tests -p 'test_*.py'` and `python -m py_compile token_strip.py smooth_capsule.py` before opening a pull request. For UI changes, run the relevant `hud_*_probe.py` scripts in an unlocked Windows desktop session and describe what you observed.
 4. Update both `README.md` and `README.zh-CN.md` when changing user-facing behavior.
 5. Open a pull request with a short summary, verification steps, and screenshots for visual changes.
 
