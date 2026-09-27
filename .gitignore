@@ -1,0 +1,30 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+dist/
+ui-review/
+.pytest_cache/
+.mypy_cache/
+
+# Local Codex data and credentials
+.env
+.env.*
+*.db
+*.sqlite
+*.sqlite3
+*.jsonl
+*.log
+token-strip.json
+
+# Development notes and superseded screenshots
+PROGRESS.md
+docs/ui-*.png
+docs/edge-*.png
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
