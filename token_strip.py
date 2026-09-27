@@ -100,6 +100,10 @@ def codex_dir() -> Path:
     return Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
 
 
+def asset_path(name: str) -> Path:
+    return Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent)) / "assets" / name
+
+
 def db_path() -> Path:
     return codex_dir() / "sqlite" / "codex-dev.db"
 
@@ -481,6 +485,8 @@ class TokenStrip:
         self.visual_only = visual_only
         self.root = tk.Tk()
         self.root.title(APP_NAME)
+        self._window_icon = tk.PhotoImage(file=str(asset_path("app-icon.png")))
+        self.root.iconphoto(True, self._window_icon)
         self.root.overrideredirect(True)
         self.root.attributes("-topmost", False)
         self.root.configure(bg="#111318")
@@ -1555,11 +1561,9 @@ class TokenStrip:
     def _start_tray(self):
         try:
             import pystray
-            from PIL import Image, ImageDraw
-            im = Image.new("RGBA", (64,64), (25,28,35,255))
-            draw = ImageDraw.Draw(im)
-            draw.rounded_rectangle((5,12,59,52), radius=18, fill=(79,132,255,255))
-            draw.text((13,23), "T", fill="white")
+            from PIL import Image
+            with Image.open(asset_path("app-icon.png")) as source:
+                im = source.convert("RGBA")
             menu = pystray.Menu(
                 pystray.MenuItem("显示/隐藏", lambda: self.root.after(0, self._toggle_visible)),
                 pystray.MenuItem("手动选择聊天…", lambda: self.root.after(0, self._choose_thread)),

@@ -1,5 +1,7 @@
 # Codex Token HUD
 
+<img src="assets/app-icon.png" alt="Codex Token HUD icon" width="72" height="72">
+
 **[简体中文](README.zh-CN.md)** · Windows · Python/Tkinter · MIT
 
 An unofficial floating HUD for the Codex desktop app on Windows. It follows the Codex window and shows token usage and cache hit rate for the current local chat. Hover to expand the same HUD into a compact usage breakdown.

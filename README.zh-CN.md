@@ -1,5 +1,7 @@
 # Codex Token HUD · Token 用量悬浮条
 
+<img src="assets/app-icon.png" alt="Codex Token HUD 图标" width="72" height="72">
+
 **[English](README.md)** · Windows · Python/Tkinter · MIT
 
 这是一个适用于 Windows 版 Codex 桌面应用的非官方悬浮 HUD。它跟随 Codex 窗口，显示当前本地聊天的 Token 用量和缓存命中率。鼠标悬停时，原胶囊会展开为同一个 HUD 中的双列用量面板。

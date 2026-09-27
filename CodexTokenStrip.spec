@@ -2,7 +2,7 @@
 from PyInstaller.utils.hooks import collect_data_files
 from PyInstaller.utils.hooks import collect_submodules
 
-datas = []
+datas = [('assets/app-icon.png', 'assets')]
 hiddenimports = []
 datas += collect_data_files('pystray')
 hiddenimports += collect_submodules('comtypes')
@@ -42,4 +42,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['assets/app-icon.ico'],
 )
