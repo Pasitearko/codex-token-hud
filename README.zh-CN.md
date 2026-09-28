@@ -45,7 +45,7 @@ py -3 -m venv .venv
 
 ## 构建便携版
 
-在已激活的虚拟环境中运行 `powershell -ExecutionPolicy Bypass -File .\build.ps1`。生成文件位于 `dist\CodexTokenStrip.exe`。脚本会安装打包依赖，并通过 PyInstaller 构建。源码仓库有意忽略 `dist/`，因此需要从检出的源码自行构建。
+先退出正在运行的 HUD，再在已激活的虚拟环境中运行 `powershell -ExecutionPolicy Bypass -File .\build.ps1`。生成文件位于 `dist\icon-check\CodexTokenStrip.exe`。脚本会安装打包依赖，并通过 PyInstaller 构建。源码仓库有意忽略 `dist/`，因此需要从检出的源码自行构建。
 
 ## 数据来源与隐私
 

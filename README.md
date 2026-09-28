@@ -45,7 +45,7 @@ Open a local Codex chat. The HUD appears near the Codex window. If automatic cha
 
 ## Build a portable executable
 
-With the virtual environment active, run `powershell -ExecutionPolicy Bypass -File .\build.ps1`. The output is `dist\CodexTokenStrip.exe`. The script installs its packaging dependencies and uses PyInstaller. The `dist/` directory is intentionally excluded from source control; build it from the checked-out source.
+With the virtual environment active and the HUD closed, run `powershell -ExecutionPolicy Bypass -File .\build.ps1`. The output is `dist\icon-check\CodexTokenStrip.exe`. The script installs its packaging dependencies and uses PyInstaller. The `dist/` directory is intentionally excluded from source control; build it from the checked-out source.
 
 ## Data and privacy
 
